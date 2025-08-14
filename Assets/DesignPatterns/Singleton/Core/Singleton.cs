@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace N2K.Singleton
 {
-    public class Singleton<T> : MonoBehaviour where T : Singleton<T>
+    public abstract class Singleton<T> : MonoBehaviour where T : Singleton<T>
     {
         [Header("=== SINGLETON ===")]
 
