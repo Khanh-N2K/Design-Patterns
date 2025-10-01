@@ -6,8 +6,10 @@ public class PoolMember : MonoBehaviour
     [Header("=== POOL MEMBER ===")]
 
     [Header("Settings")]
-    [SerializeField] private int defaultCapacity;
-    [SerializeField] private int maxSize;
+    [SerializeField]
+    private int defaultCapacity;
+    [SerializeField]
+    private int maxSize;
     public int DefaultCapacity => defaultCapacity;
     public int MaxSize => maxSize;
 
@@ -20,7 +22,7 @@ public class PoolMember : MonoBehaviour
         this.pool = pool;
     }
 
-    #region POOL ACTION CALLBACKS
+    #region ========================= POOL ACTION CALLBACKS ===================================
 
     public virtual void OnGetFromPool()
     {
@@ -36,7 +38,7 @@ public class PoolMember : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
-    #endregion
+    #endregion -----------------------------------------------------------------------------------
 
     public void ReleaseToPool()
     {

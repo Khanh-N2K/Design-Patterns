@@ -46,14 +46,14 @@ public class UIManager : Singleton<UIManager>
     }
 
     #region ================================== SCREEN ====================================
-    public void ShowScreen(ScreenType type, Action<object> onActiveCallback = null, Action<object> onInactiveCallback = null)
+    public void ShowScreen(ScreenType type, Action onShowed = null, Action onHidden = null)
     {
         HideCurrentScreen();
 
         ScreenBase newScreen = ObjectPoolAtlas.Instance.Get(_screenDict[type].gameObject, _screenHolder)
             .GetComponent<ScreenBase>();
-        newScreen.SetCallbacks(onActiveCallback, onInactiveCallback);
-        newScreen.OnActive();
+        newScreen.SetCallbacks(onShowed, onHidden);
+        newScreen.Show();
         _currentScreen = newScreen;
     }
 
@@ -61,7 +61,7 @@ public class UIManager : Singleton<UIManager>
     {
         if (_currentScreen != null)
         {
-            _currentScreen?.OnInactive();
+            _currentScreen?.Hide();
             _currentScreen.ReleaseToPool();
             _currentScreen = null;
         }
@@ -69,15 +69,15 @@ public class UIManager : Singleton<UIManager>
     #endregion ------------------------------------------------------------------------------
 
     #region ======================================= POPUP ===================================
-    public void ShowPopup(PopupType type, Action<object> onActiveCallback = null, Action<object> onInactiveCallback = null)
+    public void ShowPopup(PopupType type, Action onActivated = null, Action onInactivated = null)
     {
         if (_popupStack.Count > 0)
-            _popupStack.Peek().OnTempInactive();
+            _popupStack.Peek().TempHideUnderTopPopup();
 
         PopupBase newPopup = ObjectPoolAtlas.Instance.Get(_popupDict[type].gameObject, _popupHolder)
             .GetComponent<PopupBase>();
-        newPopup.SetCallbacks(onActiveCallback, onInactiveCallback);
-        newPopup.OnActive();
+        newPopup.SetCallbacks(onActivated, onInactivated);
+        newPopup.Show();
 
         _popupStack.Push(newPopup);
     }
@@ -87,11 +87,11 @@ public class UIManager : Singleton<UIManager>
         if (_popupStack.Count > 0)
         {
             PopupBase topPopup = _popupStack.Pop();
-            topPopup?.OnInactive();
+            topPopup?.Hide();
             topPopup.ReleaseToPool();
 
             if (_popupStack.Count > 0)
-                _popupStack.Peek().OnTempActive();
+                _popupStack.Peek().TempShowUnderTopPopup();
         }
     }
 
@@ -107,7 +107,7 @@ public class UIManager : Singleton<UIManager>
             PopupBase top = _popupStack.Pop();
             if (top == targetPopup)
             {
-                top.OnInactive();
+                top.Hide();
                 top.ReleaseToPool();
                 break;
             }
@@ -121,7 +121,7 @@ public class UIManager : Singleton<UIManager>
             _popupStack.Push(buffer.Pop());
 
         if (_popupStack.Count > 0)
-            _popupStack.Peek().OnTempActive();
+            _popupStack.Peek().TempShowUnderTopPopup();
     }
 
     public void HideAllPopups()
@@ -129,7 +129,7 @@ public class UIManager : Singleton<UIManager>
         while (_popupStack.Count > 0)
         {
             PopupBase popup = _popupStack.Pop();
-            popup?.OnInactive();
+            popup?.Hide();
             popup.ReleaseToPool();
         }
     }

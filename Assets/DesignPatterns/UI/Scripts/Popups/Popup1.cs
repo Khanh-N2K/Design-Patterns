@@ -8,14 +8,16 @@ namespace UI_Example
         [SerializeField] private Button closeBtn;
         [SerializeField] private Button openPopup2Btn;
 
-        public override void OnActive()
+        public override void Show()
         {
+            base.Show();
             closeBtn.onClick.AddListener(() => UIManager.Instance.HidePopup(this));
             openPopup2Btn.onClick.AddListener(() => UIManager.Instance.ShowPopup(PopupType.Popup2));
         }
 
-        public override void OnInactive()
+        public override void Hide()
         {
+            base.Hide();
             closeBtn.onClick.RemoveAllListeners();
             openPopup2Btn.onClick.RemoveAllListeners();
         }

@@ -5,28 +5,41 @@ public class PopupBase : PoolMember
 {
     [field: Header("=== POPUP BASE ===")]
 
-    [field: SerializeField] public PopupType Type { get; private set; }
+    [Header("References")]
+    [field: SerializeField]
+    public PopupType Type { get; private set; }
 
-    protected Action<object> OnActiveCallback;
-    protected Action<object> OnInactiveCallback;
+    [Header("Events")]
+    protected Action OnShowed;
+    protected Action OnHidden;
 
-    public void SetCallbacks(Action<object> onActiveCallback, Action<object> onInactiveCallback) 
+    public void SetCallbacks(Action onShowed, Action onHidden)
     {
-        OnActiveCallback = onActiveCallback;
-        OnInactiveCallback = onInactiveCallback;
+        OnShowed = onShowed;
+        OnHidden = onHidden;
     }
 
-    // Actually hidden/ active, which may return/ get popup from pool
-    public virtual void OnActive() { }
-    public virtual void OnInactive() { }
+    #region ================================ ACTUAL SHOW/ HIDE ===================================
+    public virtual void Show()
+    {
+        gameObject.SetActive(true);
+        OnShowed?.Invoke();
+    }
+    public virtual void Hide()
+    {
+        gameObject.SetActive(false);
+        OnHidden?.Invoke();
+    }
+    #endregion ------------------------------------------------------------------------------------
 
-    // Temporary hidden/ active when another popup is called on top
-    public virtual void OnTempActive() 
-    { 
+    #region ======================== TEMPORARLY SHOW/ HIDE UNDER TOP POPUP ========================
+    public virtual void TempShowUnderTopPopup()
+    {
         gameObject.SetActive(true);
     }
-    public virtual void OnTempInactive() 
+    public virtual void TempHideUnderTopPopup()
     {
         gameObject.SetActive(false);
     }
+    #endregion ----------------------------------------------------------------------------------------
 }

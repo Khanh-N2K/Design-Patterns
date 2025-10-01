@@ -12,9 +12,11 @@ public abstract class Singleton<T> : MonoBehaviour where T : Singleton<T>
         if (Instance != null)
         {
             Debug.LogError($"There's more than 1 instance of {typeof(T)} existed!");
-            return;
+            Destroy(gameObject);
         }
-
-        Instance = (T)this;
+        else
+        {
+            Instance = (T)this;
+        }
     }
 }

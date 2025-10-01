@@ -43,7 +43,7 @@ public class ObjectPoolAtlas : Singleton<ObjectPoolAtlas>
             defaultCapacity: prefabPoolMember.DefaultCapacity,
             maxSize: prefabPoolMember.MaxSize);
 
-        if(holder == null)
+        if (holder == null)
         {
             GameObject holderObj = new GameObject($"{prefab.name} holder");
             holder = holderObj.transform;

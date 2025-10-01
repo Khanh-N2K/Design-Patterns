@@ -5,17 +5,28 @@ public class ScreenBase : PoolMember
 {
     [field: Header("=== SCREEN BASE ===")]
 
-    [field: SerializeField] public ScreenType Type { get; private set; }
+    [Header("References")]
+    [field: SerializeField]
+    public ScreenType Type { get; private set; }
 
-    protected Action<object> OnActiveCallback;
-    protected Action<object> OnInactiveCallback;
+    [Header("Events")]
+    protected Action _onShowed;
+    protected Action _onHidden;
 
-    public void SetCallbacks(Action<object> onActiveCallback, Action<object> onInactiveCallback)
+    public void SetCallbacks(Action onShowed, Action onHidden)
     {
-        OnActiveCallback = onActiveCallback;
-        OnInactiveCallback = onInactiveCallback;
+        _onShowed = onShowed;
+        _onHidden = onHidden;
     }
 
-    public virtual void OnActive() { }
-    public virtual void OnInactive() { }
+    public virtual void Show()
+    {
+        gameObject.SetActive(true);
+        _onShowed?.Invoke();
+    }
+    public virtual void Hide()
+    {
+        gameObject.SetActive(false);
+        _onHidden?.Invoke();
+    }
 }

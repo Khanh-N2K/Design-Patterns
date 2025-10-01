@@ -7,13 +7,15 @@ namespace UI_Example
     {
         [SerializeField] private Button closeBtn;
 
-        public override void OnActive()
+        public override void Show()
         {
+            base.Show();
             closeBtn.onClick.AddListener(() => UIManager.Instance.HidePopup(this));
         }
 
-        public override void OnInactive()
+        public override void Hide()
         {
+            base.Hide();
             closeBtn.onClick.RemoveAllListeners();
         }
     }
