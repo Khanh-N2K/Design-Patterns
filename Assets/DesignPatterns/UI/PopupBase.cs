@@ -18,9 +18,9 @@ namespace N2K
 
         [field: Header("Events")]
         
-        protected Action OnShowed;
+        protected Action _onShowed;
         
-        protected Action OnHidden;
+        protected Action _onHidden;
 
         protected virtual void Initialize()
         {
@@ -29,8 +29,8 @@ namespace N2K
 
         public void SetCallbacks(Action onShowed, Action onHidden)
         {
-            OnShowed = onShowed;
-            OnHidden = onHidden;
+            _onShowed = onShowed;
+            _onHidden = onHidden;
         }
 
         #region ================================ ACTUAL SHOW/ HIDE ===================================
@@ -42,12 +42,12 @@ namespace N2K
                 _isInitialized = true;
             }
             gameObject.SetActive(true);
-            OnShowed?.Invoke();
+            _onShowed?.Invoke();
         }
         public virtual void Hide()
         {
             gameObject.SetActive(false);
-            OnHidden?.Invoke();
+            _onHidden?.Invoke();
         }
         #endregion ------------------------------------------------------------------------------------
 

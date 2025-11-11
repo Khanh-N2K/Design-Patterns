@@ -6,30 +6,22 @@ namespace N2K
 {
     public class ObjectPoolAtlas : Singleton<ObjectPoolAtlas>
     {
-        [Header("=== Object Pool Atlas ===")]
+        private readonly Dictionary<PoolMember, ObjectPool<PoolMember>> _poolMapping = new();
 
-        [Header("Pool atlas")]
-        private readonly Dictionary<Object, ObjectPool<PoolMember>> poolByPrefabMapping = new();
-        private readonly Dictionary<ObjectPool<PoolMember>, Transform> poolHolderMapping = new();
+        private readonly Dictionary<ObjectPool<PoolMember>, Transform> _poolHolderMapping = new();
 
-        public PoolMember Get(GameObject prefab, Transform holder = null)
+        public PoolMember Get(PoolMember prefab, Transform holder = null)
         {
-            if (prefab.GetComponent<PoolMember>() == null)
-            {
-                Debug.LogError($"Prefab need to be a {typeof(PoolMember)}");
-                return null;
-            }
-
-            poolByPrefabMapping.TryGetValue(prefab, out ObjectPool<PoolMember> pool);
+            _poolMapping.TryGetValue(prefab, out ObjectPool<PoolMember> pool);
             if (pool == null)
             {
                 pool = CreatePool(prefab, holder);
-                poolByPrefabMapping[prefab] = pool;
+                _poolMapping[prefab] = pool;
             }
             return pool.Get();
         }
 
-        private ObjectPool<PoolMember> CreatePool(GameObject prefab, Transform holder)
+        private ObjectPool<PoolMember> CreatePool(PoolMember prefab, Transform holder)
         {
             PoolMember prefabPoolMember = prefab.GetComponent<PoolMember>();
             ObjectPool<PoolMember> pool = new(
@@ -38,7 +30,7 @@ namespace N2K
                 actionOnRelease: (PoolMember poolMember) =>
                 {
                     poolMember.OnReleaseToPool();
-                    poolMember.transform.SetParent(poolHolderMapping[poolMember.Pool]);
+                    poolMember.transform.SetParent(_poolHolderMapping[poolMember.Pool]);
                 },
                 actionOnDestroy: (PoolMember poolMember) => poolMember.OnDestroyFromPool(),
                 collectionCheck: false,
@@ -51,21 +43,21 @@ namespace N2K
                 holder = holderObj.transform;
                 holder.SetParent(transform);
             }
-            poolHolderMapping[pool] = holder;
+            _poolHolderMapping[pool] = holder;
 
             return pool;
         }
 
-        private PoolMember CreatePoolMember(GameObject prefab)
+        private PoolMember CreatePoolMember(PoolMember prefab)
         {
-            poolByPrefabMapping.TryGetValue(prefab, out ObjectPool<PoolMember> pool);
+            _poolMapping.TryGetValue(prefab, out ObjectPool<PoolMember> pool);
             if (pool == null)
             {
                 Debug.LogError("No pool found");
                 return null;
             }
 
-            PoolMember poolMember = Instantiate(prefab, poolHolderMapping[pool]).GetComponent<PoolMember>();
+            PoolMember poolMember = Instantiate(prefab, _poolHolderMapping[pool]).GetComponent<PoolMember>();
             poolMember.SetPool(pool);
             return poolMember;
         }

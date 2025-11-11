@@ -6,21 +6,30 @@ namespace N2K
 {
     public class UIManager : Singleton<UIManager>
     {
-        [Header("=== UI MANAGER ===")]
-
         [Header("Holders")]
-        [SerializeField] private Transform _screenHolder;
-        [SerializeField] private Transform _popupHolder;
+
+        [SerializeField] 
+        private Transform _screenHolder;
+
+        [SerializeField] 
+        private Transform _popupHolder;
 
         [Header("Prefabs")]
-        [SerializeField] private List<ScreenBase> _screenPrefabs;
-        [SerializeField] private List<PopupBase> _popupPrefabs;
 
-        // Mapping type to prefab
+        [SerializeField] 
+        private List<ScreenBase> _screenPrefabs;
+
+        [SerializeField] 
+        private List<PopupBase> _popupPrefabs;
+
+        [Header("Data")]
+
         private Dictionary<ScreenType, ScreenBase> _screenDict = new();
+
         private Dictionary<PopupType, PopupBase> _popupDict = new();
 
         private ScreenBase _currentScreen;
+
         private Stack<PopupBase> _popupStack = new();
 
         public override void Initialize()
@@ -38,8 +47,7 @@ namespace N2K
         {
             HideCurrentScreen();
 
-            ScreenBase newScreen = ObjectPoolAtlas.Instance.Get(_screenDict[type].gameObject, _screenHolder)
-                .GetComponent<ScreenBase>();
+            ScreenBase newScreen = ObjectPoolAtlas.Instance.Get(_screenDict[type], _screenHolder) as ScreenBase;
             newScreen.SetCallbacks(onShowed, onHidden);
             newScreen.Show();
             _currentScreen = newScreen;
@@ -62,8 +70,7 @@ namespace N2K
             if (_popupStack.Count > 0)
                 _popupStack.Peek().TempHideUnderTopPopup();
 
-            PopupBase newPopup = ObjectPoolAtlas.Instance.Get(_popupDict[type].gameObject, _popupHolder)
-                .GetComponent<PopupBase>();
+            PopupBase newPopup = ObjectPoolAtlas.Instance.Get(_popupDict[type], _popupHolder) as PopupBase;
             newPopup.SetCallbacks(onActivated, onInactivated);
             newPopup.Show();
 
